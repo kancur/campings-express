@@ -4,13 +4,51 @@ const validationResultHandlerMiddleware = require("../middleware/validationResul
 const closestVillagesMiddleware = require("../middleware/closestVillagesMiddleware");
 const closeGeoUnitsMiddleware = require("../middleware/closeGeoUnitsMiddleware");
 const Camping = require("../models/camping");
+var ObjectId = require("mongoose").Types.ObjectId;
+
+exports.camping_detail_get = async function (req, res, next) {
+  const id = req.params.id;
+
+  if (!ObjectId.isValid(id)) {
+    next(new Error("Invalid id"));
+    return;
+  }
+
+  const response = await Camping.findOne({ _id: id })
+    .populate("close_villages")
+    .populate("geo_units", "-geometry -__v")
+    .lean();
+
+  res.json({ ...response });
+};
 
 exports.camping_get = async function (req, res, next) {
-  const villageID = req.body.village || null;
-  const geoUnitID = req.body.geounit || null;
+  const villageID = req.query.village;
+  const geoUnitID = req.query.geounit;
 
-  const response = await Camping.find({'closest_village': villageID})
-  res.json({ response });
+  if (!(villageID || geoUnitID)) {
+    next(new Error("No [village] or [geounit] parameters supplied."));
+    return;
+  }
+
+  if (villageID) {
+    if (!ObjectId.isValid(villageID)) {
+      next(new Error("Invalid village id"));
+      return;
+    }
+    const response = await Camping.find({ close_villages: villageID }).lean();
+    res.json([...response]);
+    return;
+  }
+
+  if (geoUnitID) {
+    if (!ObjectId.isValid(geoUnitID)) {
+      next(new Error("Invalid geounit id"));
+      return;
+    }
+    res.json({ "not implemented yet": "ok" });
+    return;
+  }
 };
 
 exports.camping_post = [
@@ -26,26 +64,24 @@ exports.camping_post = [
   closeGeoUnitsMiddleware,
 
   async (req, res, next) => {
-    const geoUnits = (res.locals.closeGeoUnits.map((geounit) => geounit._id))
+    const geoUnits = res.locals.closeGeoUnits.map((geounit) => geounit._id);
 
-    console.log(res.locals.closestVillages[0])
+    console.log(res.locals.closestVillages[0]);
 
     const camp = new Camping({
       name: req.body.name,
       lat: req.body.lat,
       lon: req.body.lon,
-      close_villages: ((res.locals.closestVillages).map((village) => village._id)),
+      close_villages: res.locals.closestVillages.map((village) => village._id),
       geo_units: [...geoUnits],
       closest_village: {
         name: res.locals.closestVillages[0].name,
-        distance: res.locals.closestVillages[0].distance
-      }
+        distance: res.locals.closestVillages[0].distance,
+      },
+    });
 
-    })
+    const saved = await camp.save();
 
-    // not saving right now !!
-    //const saved = await camp.save()
-
-    res.json(camp);
+    res.json(saved);
   },
 ];
