@@ -1,3 +1,4 @@
+const geolib = require("geolib");
 const geoUnit = require("../models/geoUnit");
 
 async function getAllGeoUnitsFromDB() {
@@ -10,36 +11,32 @@ async function getAllGeoUnitsFromDB() {
 }
 
 // returns a list of geomorphological units withing radius
-async function getCloseGeomorphologicalUnits(lat, long, radius = 10000) {
-  const geoUnits = await getAllGeoUnitsFromDB()
-  const campsiteCoords = { latitude: lat, longitude: long };
+module.exports = async function getCloseGeomorphologicalUnits(lat, lon, radius = 10000) {
+  const geoUnits = await getAllGeoUnitsFromDB();
+  const campsiteCoords = { lat, lon };
   const filteredGeoUnits = [];
 
   geoUnits.forEach((geoUnit) => {
     const flattenedArray = flattenMultiPolygonToSingleArray(geoUnit);
     const reducedSizeArray = getEveryNthElement(flattenedArray, 10);
-    
-    // parse coords to format expected by geolib library
-    const parsedCoords = reducedSizeArray.map(([longitude, latitude]) => ({
-      latitude,
-      longitude,
-    }));
 
-    const closestPoint = geolib.findNearest(campsiteCoords, parsedCoords);
-    const distance = geolib.getDistance(campsiteCoords, closestPoint);
+    const isInPolygon = geolib.isPointInPolygon(campsiteCoords, reducedSizeArray);
 
-    // only return geoMorphoUnits which are within the max distance
-    if (distance <= radius) {
-      filteredGeoUnits.push({
-        uid: geoUnit.properties["@id"],
-        name: geoUnit.properties.name,
-        distance,
-      });
+    if (isInPolygon) {
+      filteredGeoUnits.push(formatGeoUnits(geoUnit));
+    } else {
+      const closestPoint = geolib.findNearest(campsiteCoords, reducedSizeArray);
+      const distance = geolib.getDistance(campsiteCoords, closestPoint);
+
+      // only return geoMorphoUnits which are within the max distance
+      if (distance <= radius) {
+        filteredGeoUnits.push(formatGeoUnits(geoUnit, distance));
+      }
     }
   });
 
   return filteredGeoUnits;
-}
+};
 
 function flattenMultiPolygonToSingleArray(geoUnit) {
   if (geoUnit.geometry.type == "MultiPolygon") {
@@ -56,4 +53,13 @@ function getEveryNthElement(array, factor = 4) {
     }
   }
   return newArray;
+}
+
+function formatGeoUnits(geoUnit, distance = 0) {
+  return {
+    _id: geoUnit._id,
+    uid: geoUnit.properties["@id"],
+    name: geoUnit.properties.name,
+    distance,
+  };
 }

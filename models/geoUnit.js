@@ -10,4 +10,4 @@ var GeoMorphoUnitSchema = new Schema(
 );
 
 //Export model
-module.exports = mongoose.model('GeoMorphoUnit', GeoMorphoUnitSchema);
+module.exports = mongoose.model('GeoUnit', GeoMorphoUnitSchema);

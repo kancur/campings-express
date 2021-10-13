@@ -4,11 +4,11 @@ var Schema = mongoose.Schema;
 var CampingSchema = new Schema(
   {
     name:  {type: String, required: true},
-    description: String,
+    description: {type: String},
     lat: {type: Number, required: true},
-    long: {type: Number, required: true},
+    lon: {type: Number, required: true},
     closest_village: {type: Schema.Types.ObjectId, ref: 'Village'},
-    geomorphological_units: [{type: Schema.Types.ObjectId, ref: 'GeoMorphoUnit'}]
+    geo_units: [{type: Schema.Types.ObjectId, ref: 'GeoUnit'}]
   },
   {
     //strict:false,

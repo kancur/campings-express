@@ -1,10 +1,11 @@
+const getCloseGeoUnits = require("../helpers/getCloseGeoUnits")
 
-module.exports = async function closeGeoUnits(req, res, next) {
+module.exports = async function closeGeoUnitsMiddleware(req, res, next) {
   const lat = req.body.lat
-  const long = req.body.long
+  const lon = req.body.lon
 
-  const closeGeoUnits = await getClosestVillage(lat, long)
-
+  const closeGeoUnits = await getCloseGeoUnits(lat, lon)
+  console.log(closeGeoUnits)
   res.locals.closeGeoUnits = closeGeoUnits
 
   next()
