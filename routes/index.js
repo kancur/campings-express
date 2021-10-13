@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var api = require('./api/v1/index')
+var api = require('./api/index')
 
-router.use('/api/v1', api);
+router.use('/api', api);
 
 router.get('/', function(req, res, next) {
   res.send('API by Peter');

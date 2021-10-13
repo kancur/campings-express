@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const geoMorphoUnitController = require('../../../controllers/geoMorphoUnitController')
+const geoMorphoUnitController = require('../../controllers/geoUnitController')
 
 /* GET home page. */
 router.get('/', geoMorphoUnitController.geoMorphoUnit_detail);
