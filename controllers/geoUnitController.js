@@ -1,8 +1,8 @@
-const GeoMorphoUnit = require("../models/geoMorphoUnit");
+const GeoMorphoUnit = require("../models/geoUnit");
 
 exports.geoMorphoUnit_list = function (req, res, next) {
   GeoMorphoUnit.find()
-    .select('properties.@id')
+    .select('uid')
     .exec(function (err, geoMorphoUnits) {
     if (err) {
       return next(err);
