@@ -7,8 +7,13 @@ var CampingSchema = new Schema(
     description: {type: String},
     lat: {type: Number, required: true},
     lon: {type: Number, required: true},
-    closest_village: {type: Schema.Types.ObjectId, ref: 'Village'},
-    geo_units: [{type: Schema.Types.ObjectId, ref: 'GeoUnit'}]
+    close_villages: [{type: Schema.Types.ObjectId, ref: 'Village'}],
+    geo_units: [{type: Schema.Types.ObjectId, ref: 'GeoUnit'}],
+    closest_village: {
+      name: String,
+      distance: Number,
+    }
+    
   },
   {
     //strict:false,
