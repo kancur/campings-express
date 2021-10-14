@@ -1,4 +1,5 @@
 const GeoUnit = require("../models/geoUnit");
+var ObjectId = require("mongoose").Types.ObjectId;
 
 exports.geoUnit_list = async function (req, res, next) {
   try {
@@ -6,30 +7,42 @@ exports.geoUnit_list = async function (req, res, next) {
     res.json(data);
   } catch (error) {
     next(error);
+    return;
   }
 };
 
 exports.geoUnit_detail = async function (req, res, next) {
-  if (!req.query.id) {
-    next(new Error("Missing id parameter"));
+  const hasGeometryData = !!req.query.geometry;
+  // validate if supplied ID is a valid ObjectId (mongodb)
+  if (!ObjectId.isValid(req.params.id)) {
+    next(new Error("Invalid geounit id"));
     return;
   }
 
-  const hasGeoData = req.query.geo == "true" ? true : false;
+  try {
+    const data = await GeoUnit.findOne({ _id: req.params.id })
+      .select(!hasGeometryData && "-geometry")
+      .lean();
+    res.json(data);
+    return;
+  } catch (error) {
+    next(error);
+    return;
+  }
+};
+
+exports.geoUnit_find = async function (req, res, next) {
+  const hasGeometryData = !!req.query.geometry;
+  const name = req.query.q;
 
   try {
-    const data = GeoUnit.findOne({ "properties.@id": req.query.id }).lean().exec()
-    if (hasGeoData) {
-      res.json(geodata);
-    }
-    // filtering out geometry out of data
-    const { geometry, ...exceptGeometry } = geodata;
-    res.json(exceptGeometry);
-
+    const data = await GeoUnit.findOne({ $text: { $search: name } })
+      .select(!hasGeometryData && "-geometry")
+      .lean();
+    res.json(data);
+    return;
   } catch (error) {
-    next(error)   
+    next(error);
+    return;
   }
- 
-    
-  
 };
