@@ -1,7 +1,7 @@
-const GeoMorphoUnit = require("../models/geoUnit");
+const GeoUnit = require("../models/geoUnit");
 
-exports.geoMorphoUnit_list = function (req, res, next) {
-  GeoMorphoUnit.find()
+exports.geoUnit_list = function (req, res, next) {
+  GeoUnit.find()
     .select('uid')
     .exec(function (err, geoMorphoUnits) {
     if (err) {
@@ -11,7 +11,7 @@ exports.geoMorphoUnit_list = function (req, res, next) {
   });
 };
 
-exports.geoMorphoUnit_detail = function (req, res, next) {
+exports.geoUnit_detail = function (req, res, next) {
   if (!req.query.id) {
     next(new Error("Missing query id"));
     return;
@@ -19,7 +19,7 @@ exports.geoMorphoUnit_detail = function (req, res, next) {
 
   const hasGeoData = (req.query.geo == 'true') ? true : false;
 
-  GeoMorphoUnit.findOne({ "properties.@id": req.query.id }).exec(function (
+  GeoUnit.findOne({ "properties.@id": req.query.id }).exec(function (
     err,
     geodata
   ) {

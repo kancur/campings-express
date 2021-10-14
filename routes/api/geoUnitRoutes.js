@@ -3,8 +3,8 @@ var router = express.Router();
 const geoMorphoUnitController = require('../../controllers/geoUnitController')
 
 /* GET home page. */
-router.get('/', geoMorphoUnitController.geoMorphoUnit_detail);
+router.get('/', geoMorphoUnitController.geoUnit_detail);
 
-router.get('/list', geoMorphoUnitController.geoMorphoUnit_list)
+router.get('/list', geoMorphoUnitController.geoUnit_list)
 
 module.exports = router;

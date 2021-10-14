@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const geoMorphoUnits = require('./geoMorphoUnits')
-const campings = require('./campings')
+const geoUnitRoutes = require('./geoUnitRoutes')
+const campingRoutes = require('./campingRoutes')
 
-router.use('/geo/', geoMorphoUnits)
-router.use('/camping/', campings)
+router.use('/geo/', geoUnitRoutes)
+router.use('/camping/', campingRoutes)
 
 router.get('/', function(req, res, next) {
   res.json({ title: 'V1 API' });
