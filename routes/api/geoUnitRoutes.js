@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const geoMorphoUnitController = require('../../controllers/geoUnitController')
+const geoUnitController = require('../../controllers/geoUnitController')
 
 /* GET home page. */
-router.get('/', geoMorphoUnitController.geoUnit_detail);
+router.get('/list', geoUnitController.geoUnit_list);
+router.get('/find', geoUnitController.geoUnit_find);
+router.get('/:id', geoUnitController.geoUnit_detail);
 
-router.get('/list', geoMorphoUnitController.geoUnit_list)
 
 module.exports = router;
