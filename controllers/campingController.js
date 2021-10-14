@@ -14,12 +14,17 @@ exports.camping_detail_get = async function (req, res, next) {
     return;
   }
 
-  const response = await Camping.findOne({ _id: id })
+  try {
+    const response = await Camping.findOne({ _id: id })
     .populate("close_villages")
     .populate("geo_units", "-geometry -__v")
     .lean();
 
-  res.json({ ...response });
+    res.json({ ...response });
+  } catch (error) {
+    next(error)
+  }
+
 };
 
 exports.camping_get = async function (req, res, next) {
