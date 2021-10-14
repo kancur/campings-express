@@ -4,7 +4,8 @@ var Schema = mongoose.Schema;
 var CampingSchema = new Schema(
   {
     name:  {type: String, required: true},
-    description: {type: String},
+    tagline: {type: String, required: false, minLength: 10, maxLength: 60},
+    description: {type: String, required: false, minLength: 20},
     lat: {type: Number, required: true},
     lon: {type: Number, required: true},
     close_villages: [{type: Schema.Types.ObjectId, ref: 'Village'}],
