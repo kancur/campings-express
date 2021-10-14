@@ -1,6 +1,9 @@
 const Village = require("../models/village");
 const geolib = require("geolib");
 
+// only return villages closer than max distance (in meters)
+MAX_DISTANCE_FROM_VILLAGE = 20000
+
 async function getAllVillagesFromDB() {
   try {
     const data = await Village.find().lean().exec();
@@ -29,10 +32,12 @@ async function getClosestVillages(lat, lon) {
   const closestWithDistances = closestVillages.map((village) => {
     const villageCoords = {lat: village.lat, lon: village.lon}
     const distance =  geolib.getDistance(campsiteCoords, villageCoords)
-    return {
-      ...village,
-      distance
-    };
+    if (distance < MAX_DISTANCE_FROM_VILLAGE){
+      return {
+        ...village,
+        distance
+      };
+    }
   });
   
   return closestWithDistances;
