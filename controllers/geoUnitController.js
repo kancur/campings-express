@@ -3,7 +3,7 @@ var ObjectId = require("mongoose").Types.ObjectId;
 
 exports.geoUnit_list = async function (req, res, next) {
   try {
-    const data = await GeoUnit.find().select("_id properties.name properties.natural").exec();
+    const data = await GeoUnit.find().select("_id properties.name properties.natural slug").exec();
     res.json(data);
   } catch (error) {
     next(error);
@@ -31,12 +31,12 @@ exports.geoUnit_detail = async function (req, res, next) {
   }
 };
 
-exports.geoUnit_find = async function (req, res, next) {
+exports.geoUnit_slug = async function (req, res, next) {
   const hasGeometryData = !!req.query.geometry;
-  const name = req.query.q;
+  const slug = req.params.slug;
 
   try {
-    const data = await GeoUnit.findOne({ $text: { $search: name } })
+    const data = await GeoUnit.findOne({ slug: slug })
       .select(!hasGeometryData && "-geometry")
       .lean();
     res.json(data);

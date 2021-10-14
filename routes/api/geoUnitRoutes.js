@@ -4,7 +4,7 @@ const geoUnitController = require('../../controllers/geoUnitController')
 
 /* GET home page. */
 router.get('/list', geoUnitController.geoUnit_list);
-router.get('/find', geoUnitController.geoUnit_find);
+router.get('/slug/:slug', geoUnitController.geoUnit_slug);
 router.get('/:id', geoUnitController.geoUnit_detail);
 
 
