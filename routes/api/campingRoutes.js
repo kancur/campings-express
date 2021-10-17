@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
-const campingControler = require('../../controllers/campingController')
+const express = require('express');
+const router = express.Router();
+const campingController = require('../../controllers/campingController')
 
-router.get('/',  campingControler.camping_get);
-router.post('/', campingControler.camping_post)
-router.get('/:id',  campingControler.camping_detail_get);
+router.get('/',  campingController.camping_get);
+router.post('/', campingController.camping_post)
+router.get('/close/', campingController.camping_close_get);
+router.get('/:id',  campingController.camping_detail_get);
 
 module.exports = router;

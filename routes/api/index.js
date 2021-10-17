@@ -1,14 +1,20 @@
-var express = require('express');
-var router = express.Router();
-const geoUnitRoutes = require('./geoUnitRoutes')
-const campingRoutes = require('./campingRoutes')
+const express = require("express");
+const router = express.Router();
 
-router.use('/geo/', geoUnitRoutes)
-router.use('/camping/', campingRoutes)
+const geoUnitRoutes = require("./geoUnitRoutes");
+const campingRoutes = require("./campingRoutes");
+const villageRoutes = require("./villageRoutes");
+const combinedRoutes = require("./combinedRoutes");
+const searchRoutes = require("./searchRoutes");
 
-router.get('/', function(req, res, next) {
-  res.json({ title: 'V1 API' });
+router.use("/geo/", geoUnitRoutes);
+router.use("/camping/", campingRoutes);
+router.use("/village/", villageRoutes);
+router.use("/combined/", combinedRoutes);
+router.use("/search/", searchRoutes);
+
+router.get("/", function (req, res, next) {
+  res.json({ title: "V1 API" });
 });
-
 
 module.exports = router;
