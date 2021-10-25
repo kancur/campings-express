@@ -8,6 +8,5 @@ var VillageSchema = new Schema(
     collection : 'villages'
   }
 );
-
 //Export model
 module.exports = mongoose.model('Village', VillageSchema);
