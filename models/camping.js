@@ -16,7 +16,7 @@ var CampingSchema = new Schema(
     },
   },
   {
-    //strict:false,
+    strict:false,
     collection: "campings",
   }
 );
