@@ -55,7 +55,7 @@ exports.camping_get = async function (req, res, next) {
   }
 };
 
-exports.camping_post = [
+exports.camping_create_post = [
   body("name", "name must be longer than 3 chars (camp name)").trim().isLength({ min: 3 }).escape(),
   body("lat", "lat must be a numeric value (latitude)").trim().isNumeric().escape(),
   body("lon", "lon must be a numeric value (longitude)").trim().isNumeric().escape(),
@@ -93,6 +93,8 @@ exports.camping_post = [
 exports.camping_close_get = async function (req, res, next) {
   const lat = req.query.lat;
   const lon = req.query.lon;
+  const limit = req.query.limit || 10;
+  const maxDistance = req.query.distance;
 
   function isLatitude(lat) {
     return isFinite(lat) && Math.abs(lat) <= 90;
@@ -108,8 +110,17 @@ exports.camping_close_get = async function (req, res, next) {
     return next(new Error("Longitude out of bounds, wrong format or missing"));
   }
 
-  const campings = await getClosestCampings({ lat, lon });
+  const campings = await getClosestCampings({ lat, lon }, limit, maxDistance);
   if (campings) {
     res.json(campings);
   }
 };
+
+exports.camping_get_list = async function (req, res, next) {
+  try {
+    const response = await Camping.find().lean()
+    res.json(response)
+  } catch (error) {
+    next(error)
+  }
+}
