@@ -1,9 +1,6 @@
 const Village = require("../models/village");
 const { closestPoints } = require("./closestPoints");
 
-// only return villages closer than max distance (in meters)
-MAX_DISTANCE_FROM_VILLAGE = 20000;
-
 async function getAllVillagesFromDB() {
   try {
     const data = await Village.find().lean().exec();
@@ -13,18 +10,20 @@ async function getAllVillagesFromDB() {
   }
 }
 
-async function getClosestVillages(lat, lon) {
+async function getClosestVillages(coords, limit=10, maxDistance) {
   const allVillages = await getAllVillagesFromDB();
-  const campsiteCoords = { lat, lon };
 
   const preparedVillages = allVillages.map((village) => ({
     lat: village.coords[1],
     lon: village.coords[0],
     _id: village._id,
     name: village.name,
+    parents: village.parents
   }));
 
-  return closestPoints(campsiteCoords, preparedVillages, true, 5, MAX_DISTANCE_FROM_VILLAGE);
+  const ordered = closestPoints(coords, preparedVillages, true, maxDistance);
+  const sliced = ordered.slice(0, limit)
+  return sliced
 }
 
 module.exports = getClosestVillages;
