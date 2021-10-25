@@ -10,9 +10,9 @@ const geolib = require("geolib");
  * @param {Number} arrayOfPointObj[].lon - Longitude in xx.xxxxxx format
  * @param {Boolean} calculateDistance - Whether to calculate distances
  * @param {Number} maxReturn - Max amount of results to return
- * @param {Number} maxDistance - Limit results by maximmum distance in meters
+ * @param {Number} maxDistance - Limit results by maximum distance in meters
  */
-function getClosePoints(
+function getClosestPoints(
   placeCoords,
   arrayOfPointObj,
   calculateDistance = false,
@@ -26,25 +26,18 @@ function getClosePoints(
     const closestWithDistances = closestPoints.map((point) => {
       const pointCoords = { lat: point.lat, lon: point.lon };
       const distance = geolib.getDistance(placeCoords, pointCoords);
-      // maxDistanceFilter
-      if (maxDistance) {
-        if (distance <= maxDistance) {
-          return {
-            ...point,
-            distance,
-          };
-        }
-      } else {
-        return {
-          ...point,
-          distance,
-        };
-      }
-    });
-    console.log(closestWithDistances);
 
+      return {
+        ...point,
+        distance,
+      };
+    });
+
+    if (maxDistance) {
+      return closestWithDistances.filter((camp) => camp.distance <= maxDistance)
+    }
     return closestWithDistances;
   }
   return closestPoints;
 }
-exports.closestPoints = getClosePoints;
+exports.closestPoints = getClosestPoints;
