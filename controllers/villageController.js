@@ -13,7 +13,7 @@ exports.village_list = async function (req, res, next) {
 
 exports.village_slug = async function (req, res, next) {
   try {
-    const data = await Village.findOne({ slug: req.params.slug }).exec();
+    const data = await Village.findOne({ slug: req.params.slug }).populate('campings').exec();
     res.json(data);
   } catch (error) {
     next(error);
