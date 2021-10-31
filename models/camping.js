@@ -17,4 +17,4 @@ const CampingSchema = new Schema(
 );
 
 //Export model
-module.exports = mongoose.model("Campings", CampingSchema);
+module.exports = mongoose.model("Camping", CampingSchema);
