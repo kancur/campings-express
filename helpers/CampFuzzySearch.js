@@ -1,6 +1,6 @@
-const Fuse = require('./fuse.common.js')
-const { getAllCampData } = require('./getMergedSearchData')
-const diacritics = require('diacritics')
+const Fuse = require("./fuse.common.js");
+const { getAllCampData } = require("./getMergedSearchData");
+const diacritics = require("diacritics");
 
 const options = {
   includeScore: false,
@@ -14,18 +14,24 @@ const options = {
   includeScore: true,
   //getFn: getFn,
   keys: [
-    "villages.name"
-  ]
+    {
+      name: "name",
+      weight: 1,
+    },
+    {
+      name: "villages.name",
+      weight: 0.5,
+    },
+  ],
 };
 
-const fuse = new Fuse([], options)
+const fuse = new Fuse([], options);
 
-getAllCampData()
-  .then((data) => fuse.setCollection(data))
+getAllCampData().then((data) => fuse.setCollection(data));
 
 module.exports = async function campFuzzySearch(query) {
-  const resultArray = await fuse.search(diacritics.remove(query))
-  const sliced = resultArray.slice(0,10)
-  const cleaned = sliced.map(({item, score}) => ({...item, score}))
-  return cleaned
-}
+  const resultArray = await fuse.search(diacritics.remove(query));
+  const sliced = resultArray.slice(0, 10);
+  const cleaned = sliced.map(({ item, score }) => ({ ...item, score }));
+  return cleaned;
+};
