@@ -1,6 +1,7 @@
 const Village = require("../models/village");
 const GeoUnit = require("../models/geoUnit");
 const Camping = require("../models/camping");
+const Waterbody = require("../models/waterBody");
 
 let searchData = null;
 
@@ -9,7 +10,8 @@ async function getMergedSearchData() {
     const villageData = await getVillageData();
     const geoData = await getGeoData();
     const campData = await getCampData();
-    searchData = [...villageData, ...geoData, ...campData];
+    const waterbodyData = await getWaterbodyData();
+    searchData = [...villageData, ...geoData, ...campData, ...waterbodyData];
   }
   return searchData;
 }
@@ -55,10 +57,19 @@ async function getCampData() {
   return parsed;
 }
 
+async function getWaterbodyData() {
+  const data = await Waterbody.find().select("name slug -_id").lean();
+  const parsed = data.map((waterbody) => ({
+    ...waterbody,
+    type: "waterbody",
+  }));
+  return parsed;
+}
+
 async function getAllCampData() {
   const data = await Camping.find().lean();
-  return data
+  return data;
 }
 
 module.exports.getMergedSearchData = getMergedSearchData;
-module.exports.getAllCampData = getAllCampData
+module.exports.getAllCampData = getAllCampData;
