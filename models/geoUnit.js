@@ -1,13 +1,12 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var GeoMorphoUnitSchema = new Schema(
   {},
   {
-    strict:false,
-    collection : 'geomorphological_units'
+    strict: false,
+    collection: "geomorphological_units",
   }
 );
 
-//Export model
-module.exports = mongoose.model('GeoUnit', GeoMorphoUnitSchema);
+module.exports = mongoose.model("GeoUnit", GeoMorphoUnitSchema);
