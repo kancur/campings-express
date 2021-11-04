@@ -5,6 +5,8 @@ var ObjectId = require("mongoose").Types.ObjectId;
 const getClosestVillages = require("../helpers/getClosestVillages");
 const toSlug = require("../helpers/toSlug");
 const getClosestCampings = require("../helpers/getClosestCampings");
+const { prepareCloseCampingsBulkOp, prepareSlugBulkOp } = require("../helpers/dbOperations");
+
 
 exports.camping_calculate_closest_villages = async function (req, res, next) {
   try {
@@ -51,55 +53,47 @@ exports.camping_calculate_slugs = async function (req, res, next) {
 };
 
 exports.villages_calculate_closest_campings = async function (req, res, next) {
-  let updateCount = 0;
-
   try {
-    const villages = await Village.find().lean();
-    var bulkOperation = Village.collection.initializeUnorderedBulkOp();
-
-    for (const village of villages) {
-      const closeCampings = await getClosestCampings(village.coords, 10);
-      const idsOfCloseCampings = closeCampings.map((camp) => camp._id);
-      bulkOperation.find({ _id: village._id }).updateOne({ $set: { campings: idsOfCloseCampings } });
-
-      updateCount += 1;
-      console.log("updating:", updateCount);
-    }
-
-    bulkOperation.execute(function (err, result) {
+    const bulkOp = await updateCloseCampings(Village)
+    bulkOp.execute(function (err, result) {
       if (err) {
         return res.json({ error: err });
       } else {
-        res.json({ status: result, updated_count: updateCount });
+        res.json(result);
       }
     });
   } catch (error) {
     next(error);
     return;
   }
-};
+}
 
-exports.water_bodies_calculate_closest_campings = async function (req, res, next) {
-  let updateCount = 0;
-
+exports.waterbodies_calculate_slugs = async function (req, res, next) {
   try {
-    const waterBodies = await WaterBody.find().lean();
-    var bulkOperation = WaterBody.collection.initializeUnorderedBulkOp();
-
-    for (const waterBody of waterBodies) {
-      const closeCampings = await getClosestCampings(waterBody.coords, 10);
-      const idsOfCloseCampings = closeCampings.map((camp) => camp._id);
-      bulkOperation.find({ _id: waterBody._id }).updateOne({ $set: { campings: idsOfCloseCampings } });
-
-      updateCount += 1;
-      console.log("updating:", updateCount);
+    const bulkOp = await prepareSlugBulkOp(WaterBody)
+    if (bulkOp.length === 0) {
+      return res.json({"status": "bulkop didn't have any changes planned"})
     }
-
-    bulkOperation.execute(function (err, result) {
+    bulkOp.execute(function (err, result) {
       if (err) {
         return res.json({ error: err });
       } else {
-        res.json({ status: result, updated_count: updateCount });
+        res.json(result);
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.waterbodies_calculate_closest_campings = async function (req, res, next) {
+  try {
+    const bulkOp = await prepareCloseCampingsBulkOp(WaterBody)
+    bulkOp.execute(function (err, result) {
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        res.json(result);
       }
     });
   } catch (error) {
