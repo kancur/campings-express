@@ -12,9 +12,9 @@ const options = {
   includeScore: false,
   includeMatches: false,
   includeRefIndex: false,
-  // findAllMatches: false,
+   findAllMatches: true,
   // minMatchCharLength: 1,
-   threshold: 0.25,
+  threshold: 0.25,
   // ignoreFieldNorm: false,
   getFn: getFn,
   keys: [
