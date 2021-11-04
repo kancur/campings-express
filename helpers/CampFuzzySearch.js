@@ -9,7 +9,7 @@ const options = {
   findAllMatches: true,
   minMatchCharLength: 3,
   //location: 0.5,
-  threshold: 0.3,
+  //threshold: 0.6,
   // ignoreFieldNorm: false,
   includeScore: true,
   //getFn: getFn,
