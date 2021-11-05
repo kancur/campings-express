@@ -1,23 +1,26 @@
-const getClosestCampings = require("../helpers/getClosestCampings");
+const { getClosestCampings, getCampingsInsidePolygon } = require("../helpers/getClosestCampings");
 const toSlug = require("../helpers/toSlug");
+const geolib = require("geolib");
+const { flattenMultiPolygonToSingleArray } = require("./flattenMultiPolygonGeounit");
+
+const MIN_NR_OF_CAMPS = 10;
 
 // Model instance must have coords property at the top level
 module.exports.prepareCloseCampingsBulkOp = async function updateCloseCampings(Model) {
-  let updateCount = 0;
   const instancesArray = await Model.find().lean();
   const bulkOperation = Model.collection.initializeUnorderedBulkOp();
 
   for (const instance of instancesArray) {
-    const closeCampings = await getClosestCampings(instance.coords, 10);
+    console.log("-- ", instance.properties.name);
+    let closeCampings = [];
+    if (instance?.coords) {
+      closeCampings = await getClosestCampings(instance.coords, MIN_NR_OF_CAMPS);
+    } else {
+      closeCampings = await getCloseCampingsForGeounit(instance)
+    }
     const idsOfCloseCampings = closeCampings.map((camp) => camp._id);
     bulkOperation.find({ _id: instance._id }).updateOne({ $set: { campings: idsOfCloseCampings } });
-
-    updateCount += 1;
-    if (updateCount % 10 === 0) {
-      console.log("updating:", updateCount);
-    }
   }
-
   return bulkOperation;
 };
 
@@ -49,3 +52,26 @@ module.exports.prepareSlugBulkOp = async function updateSlugs(Model, forceUpdate
   console.log({ had_slug_count: hadSlugCount, slug_calculated_count: calculatedSlugCount });
   return bulkOperation;
 };
+
+async function getCloseCampingsForGeounit(instance) {
+  let closecamps = []
+  const instanceCoordsArray = flattenMultiPolygonToSingleArray(instance);
+  const campsInPolygon = await getCampingsInsidePolygon(instanceCoordsArray);
+  if (campsInPolygon.length > 0) {
+    closecamps.push(...campsInPolygon);
+  }
+  console.log("---- camps in polygon:", campsInPolygon.length);
+  if (campsInPolygon.length < MIN_NR_OF_CAMPS) {
+    const centerPoint = geolib.getCenter(instanceCoordsArray);
+    const campsNearCenterPoint = await getClosestCampings(centerPoint, 100);
+
+    for (let i = 0; i < MIN_NR_OF_CAMPS - campsInPolygon.length; i++) {
+      const wasAlreadyUsed = closecamps.find((polygonCamp) => polygonCamp.name === campsNearCenterPoint[i].name)
+      if (wasAlreadyUsed) {
+        continue
+      }
+      closecamps.push(campsNearCenterPoint[i]);
+    }
+  }
+  return closecamps
+}

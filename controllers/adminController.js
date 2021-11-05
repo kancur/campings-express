@@ -1,10 +1,10 @@
 const WaterBody = require("../models/waterBody");
 const Village = require("../models/village");
+const Geounit = require("../models/geoUnit")
 
 var ObjectId = require("mongoose").Types.ObjectId;
 const getClosestVillages = require("../helpers/getClosestVillages");
 const toSlug = require("../helpers/toSlug");
-const getClosestCampings = require("../helpers/getClosestCampings");
 const { prepareCloseCampingsBulkOp, prepareSlugBulkOp } = require("../helpers/dbOperations");
 
 
@@ -89,6 +89,22 @@ exports.waterbodies_calculate_slugs = async function (req, res, next) {
 exports.waterbodies_calculate_closest_campings = async function (req, res, next) {
   try {
     const bulkOp = await prepareCloseCampingsBulkOp(WaterBody)
+    bulkOp.execute(function (err, result) {
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        res.json(result);
+      }
+    });
+  } catch (error) {
+    next(error);
+    return;
+  }
+};
+
+exports.geounit_calculate_closest_campings = async function (req, res, next) {
+  try {
+    const bulkOp = await prepareCloseCampingsBulkOp(Geounit)
     bulkOp.execute(function (err, result) {
       if (err) {
         return res.json({ error: err });

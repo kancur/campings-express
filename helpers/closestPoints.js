@@ -34,10 +34,11 @@ function getClosestPoints(
     });
 
     if (maxDistance) {
-      return closestWithDistances.filter((camp) => camp.distance <= maxDistance)
+      return closestWithDistances.filter((instance) => instance.distance <= maxDistance)
     }
     return closestWithDistances;
   }
   return closestPoints;
 }
+
 exports.closestPoints = getClosestPoints;

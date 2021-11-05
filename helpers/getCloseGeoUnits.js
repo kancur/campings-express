@@ -1,5 +1,6 @@
 const geolib = require("geolib");
 const geoUnit = require("../models/geoUnit");
+const { flattenMultiPolygonToSingleArray } = require("./flattenMultiPolygonGeounit");
 
 async function getAllGeoUnitsFromDB() {
   try {
@@ -37,13 +38,6 @@ module.exports = async function getCloseGeomorphologicalUnits(lat, lon, radius =
 
   return filteredGeoUnits;
 };
-
-function flattenMultiPolygonToSingleArray(geoUnit) {
-  if (geoUnit.geometry.type == "MultiPolygon") {
-    return geoUnit.geometry.coordinates[0].flat();
-  }
-  return geoUnit.geometry.coordinates[0];
-}
 
 function getEveryNthElement(array, factor = 4) {
   const newArray = [];

@@ -1,5 +1,6 @@
 const Camping = require("../models/camping");
 const { closestPoints } = require("./closestPoints");
+const geolib = require('geolib');
 
 async function getAllCampingsFromDB() {
   try {
@@ -10,20 +11,10 @@ async function getAllCampingsFromDB() {
   }
 }
 
-/**
- *
- * @param {Object} coords
- * @param {Number} coords.lat - Latitude in xx.xxxxxxx format
- * @param {Number} coords.lon - Longitude in xx.xxxxxxx format
- * @returns
- */
-
-
-// closestPoints function needs lat lon coordinates to be at the top of object (not nested)
 let allCampings;
 let formatted;
 
-async function getCloseCampings(coords, limit = 10, maxDistance) {
+async function getClosestCampings(coords, limit = 10, maxDistance) {
   if (!allCampings) {
     allCampings = await getAllCampingsFromDB();
     formatted = allCampings.map((camp) => ({ ...camp.coords, data: camp }));
@@ -31,11 +22,26 @@ async function getCloseCampings(coords, limit = 10, maxDistance) {
   const closest = closestPoints(coords, formatted, true, limit, maxDistance);
   // extracting the original data
   if (closest) {
-    return closest.map(({data, distance}) => ({...data, distance}))
+    return closest.map(({ data, distance }) => ({ ...data, distance }));
   } else {
-    return {}
+    return {};
   }
-  
 }
 
-module.exports = getCloseCampings;
+async function getCampingsInsidePolygon(polygon) {
+  if (!allCampings) {
+    allCampings = await getAllCampingsFromDB();
+    formatted = allCampings.map((camp) => ({ ...camp.coords, data: camp }));
+  }
+  const campsInPolygon = allCampings.reduce((totalArray, camp) => {
+    const inPolygon = geolib.isPointInPolygon(camp.coords, polygon)
+    if (inPolygon) {return [...totalArray, {...camp, distance: 0}]}
+    else return totalArray
+  },[])
+
+  return campsInPolygon
+}
+
+module.exports.getClosestCampings = getClosestCampings;
+module.exports.getCampingsInsidePolygon = getCampingsInsidePolygon;
+
