@@ -38,6 +38,7 @@ exports.geoUnit_slug = async function (req, res, next) {
 
   try {
     const data = await GeoUnit.findOne({ slug: slug })
+      .populate("campings")
       .select(!hasGeometryData && "-geometry")
       .lean();
     res.json(data);
