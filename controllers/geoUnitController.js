@@ -21,6 +21,7 @@ exports.geoUnit_detail = async function (req, res, next) {
 
   try {
     const data = await GeoUnit.findOne({ _id: req.params.id })
+      .populate("campings")
       .select(!hasGeometryData && "-geometry")
       .lean();
     res.json(data);
