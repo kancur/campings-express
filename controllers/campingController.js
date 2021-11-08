@@ -1,9 +1,7 @@
-const { body, validationResult } = require("express-validator");
+const { body } = require("express-validator");
 const validationResultHandlerMiddleware = require("../middleware/validationResultHanderMiddleware");
-const closestVillagesMiddleware = require("../middleware/closestVillagesMiddleware");
-const closeGeoUnitsMiddleware = require("../middleware/closeGeoUnitsMiddleware");
 const Camping = require("../models/camping");
-var ObjectId = require("mongoose").Types.ObjectId;
+const ObjectId = require("mongoose").Types.ObjectId;
 const getClosestCampings = require("../helpers/getClosestCampings");
 const bodyLogger = require("../middleware/bodyLogger");
 const multer = require("multer");
