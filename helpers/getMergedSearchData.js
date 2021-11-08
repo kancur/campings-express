@@ -31,11 +31,12 @@ async function getVillageData() {
 async function getGeoData() {
   const data = await GeoUnit.find().select("properties.name properties.natural slug -_id").lean();
   // flattens the array and matches the format of {slug, type, name}
-  const flattened = data.map(({ slug, properties }) => ({
+  const flattened = data.map(({ slug, properties }) => {    
+    return({
     slug,
     name: properties.name,
     type: properties.natural,
-  }));
+  })});
   return flattened;
 }
 
