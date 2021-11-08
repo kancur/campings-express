@@ -32,7 +32,7 @@ module.exports.prepareSlugBulkOp = async function updateSlugs(Model, forceUpdate
 
   let hadSlugCount = 0;
   let calculatedSlugCount = 0;
-  var bulkOperation = Model.collection.initializeUnorderedBulkOp();
+  const bulkOperation = Model.collection.initializeUnorderedBulkOp();
 
   for (const instance of instances) {
     const hasSlug = !!instance.slug;
