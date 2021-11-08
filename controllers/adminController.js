@@ -2,7 +2,7 @@ const WaterBody = require("../models/waterBody");
 const Village = require("../models/village");
 const Geounit = require("../models/geoUnit")
 
-var ObjectId = require("mongoose").Types.ObjectId;
+const ObjectId = require("mongoose").Types.ObjectId;
 const getClosestVillages = require("../helpers/getClosestVillages");
 const toSlug = require("../helpers/toSlug");
 const { prepareCloseCampingsBulkOp, prepareSlugBulkOp } = require("../helpers/dbOperations");
