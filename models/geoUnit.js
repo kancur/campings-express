@@ -1,7 +1,7 @@
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var GeoMorphoUnitSchema = new Schema(
+const GeoMorphoUnitSchema = new Schema(
   {
     campings: [{ type: Schema.Types.ObjectId, ref: "Camping" }],
   },

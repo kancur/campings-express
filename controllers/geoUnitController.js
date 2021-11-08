@@ -1,5 +1,5 @@
 const GeoUnit = require("../models/geoUnit");
-var ObjectId = require("mongoose").Types.ObjectId;
+const ObjectId = require("mongoose").Types.ObjectId;
 
 exports.geoUnit_list = async function (req, res, next) {
   try {
