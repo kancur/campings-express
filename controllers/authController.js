@@ -40,7 +40,7 @@ exports.login_post = async (req, res) => {
 exports.current_user_get = [
   requireAuth,
   async (req, res) => {
-    res.json({...res.locals.user})
+    res.json(res.locals.user)
   }
 ]
 
