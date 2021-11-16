@@ -6,6 +6,7 @@ const requireAuth = (req, res, next) => {
   const token = req.cookies.jwt
 
   console.log('--requiring auth--')
+  console.log('--cookies--', req.cookies)
   console.log('--jwt token ---> ', token)
 
   if (token) {
