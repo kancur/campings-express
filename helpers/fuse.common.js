@@ -617,7 +617,6 @@
        }; // Iterate over every key (i.e, path), and fetch the value at that key
  
        this.keys.forEach(function (key, keyIndex) {
-         // console.log(key)
          var value = _this3.getFn(doc, key.path);
  
          if (!isDefined(value)) {
