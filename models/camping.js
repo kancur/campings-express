@@ -9,11 +9,22 @@ const CampingSchema = new Schema(
     website: { type: String, required: false },
     featured_image: { type: String, required: false },
     coords: { lat: { type: Number, required: true }, lon: { type: Number, required: true } },
+    villages: { type: Schema.Types.ObjectId, ref: "Village" },
   },
   {
     strict: false,
     collection: "campings",
   }
 );
+
+CampingSchema.virtual('closest_village', {
+  ref: 'Village',
+  localField: 'villages[0]._id',
+  foreignField: '_id',
+  justOne: true,
+})
+
+CampingSchema.set('toObject', { virtuals: true });
+CampingSchema.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model("Camping", CampingSchema);
