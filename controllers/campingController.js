@@ -39,6 +39,21 @@ exports.camping_detail_get = async function (req, res, next) {
   }
 };
 
+exports.camping_slug_get = async function (req, res, next) {
+  const slug = req.params.slug;
+
+  try {
+    const response = await Camping.findOne({ slug: slug })
+      .populate("close_villages")
+      .populate("geo_units", "-geometry -__v")
+      .lean();
+
+    res.json({ ...response });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 exports.camping_get = async function (req, res, next) {
   const villageID = req.query.village;
   const geoUnitID = req.query.geounit;
