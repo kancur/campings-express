@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-/* exports.camping_detail_get = async function (req, res, next) {
+exports.camping_detail_get = async function (req, res, next) {
   const id = req.params.id;
 
   if (!ObjectId.isValid(id)) {
@@ -37,7 +37,7 @@ const upload = multer({ storage: storage });
   } catch (error) {
     return next(error);
   }
-}; */
+};
 
 exports.camping_slug_get = async function (req, res, next) {
   const slug = req.params.slug;
