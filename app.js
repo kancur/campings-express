@@ -25,9 +25,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => { 
+  console.log('origin --->',req.headers.origin);
+  next()
+})
 app.use(
   cors({
-    origin: process.env.CORS || '*',
+    origin: process.env.CORS || 'http://localhost:3001',
     credentials: true,
   })
 );
