@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   cors({
-    origin: process.env.CORS || 'http://localhost:3001',
+    origin: process.env.CORS || '*',
     credentials: true,
   })
 );
