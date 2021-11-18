@@ -1,6 +1,9 @@
 public/uploads
 .env
 
+#aws keys
+rootkey.csv
+
 # Logs
 logs
 *.log
