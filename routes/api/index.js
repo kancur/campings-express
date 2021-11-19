@@ -9,6 +9,7 @@ const searchRoutes = require('./searchRoutes');
 const adminRoutes = require('./adminRoutes');
 const waterbodyRoutes = require('./waterbodyRoutes');
 const authRoutes = require('./authRoutes');
+const userRoutes = require('./userRoutes');
 
 router.use('/geo', geoUnitRoutes);
 router.use('/camping', campingRoutes);
@@ -18,5 +19,6 @@ router.use('/search', searchRoutes);
 router.use('/admin', adminRoutes);
 router.use('/waterbody', waterbodyRoutes);
 router.use('/auth', authRoutes);
+router.use('/user', userRoutes);
 
 module.exports = router;
