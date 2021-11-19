@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 
 var createError = require('http-errors');
 var express = require('express');
@@ -26,10 +26,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => { 
-  console.log('origin --->',req.headers.origin);
-  next()
-})
+/* app.use((req, res, next) => {
+  console.log('origin --->', req.headers.origin);
+  next();
+}); */
+
+app.options('*', cors());
 app.use(
   cors({
     origin: process.env.CORS || 'http://localhost:3001',
@@ -38,8 +40,6 @@ app.use(
 );
 // intentional latency
 //app.use(function(req,res,next){setTimeout(next,1000)});
-
-app.options('*', cors());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
