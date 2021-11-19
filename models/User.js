@@ -14,6 +14,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Please enter a password'],
     },
+    favorite_camps: [{ type: Schema.Types.ObjectId, ref: "Camping" }],
   },
   {
     strict: false,
@@ -22,6 +23,8 @@ const userSchema = new Schema(
 );
 
 userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
   next();
@@ -45,7 +48,6 @@ userSchema.statics.login = async function(email, password) {
     throw Error('Incorrect password')
   }
   throw Error('Incorrect email');
-
 };
 
 module.exports = mongoose.model('User', userSchema);
