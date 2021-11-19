@@ -24,4 +24,12 @@ const requireAuth = (req, res, next) => {
   }
 };
 
-module.exports = { requireAuth };
+const requireAuthResHandler = (req, res, next) => {
+  if (res.locals.user === null) {
+    res.status(401).json({ error: 'unauthorized' });
+  } else {
+    next();
+  }
+};
+
+module.exports = { requireAuth, requireAuthResHandler };
