@@ -1,12 +1,9 @@
-const getClosestVillages = require("../helpers/getClosestVillages")
+const getClosestVillages = require('../helpers/getClosestVillages');
 
 module.exports = async function closestVillageMiddleware(req, res, next) {
-  const lat = req.body.lat
-  const lon = req.body.lon
+  //const { lat, lon } = req.body.coords;
+  const closestVillages = await getClosestVillages(req.body.coords);
+  res.locals.closestVillages = closestVillages;
 
-  const closestVillages = await getClosestVillages(lat, lon)
-
-  res.locals.closestVillages = closestVillages
-
-  next()
-}
+  next();
+};
