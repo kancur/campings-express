@@ -11,6 +11,9 @@ async function getAllVillagesFromDB() {
 }
 
 async function getClosestVillages(coords, limit=10, maxDistance) {
+  if (!coords || !coords.lat || !coords.lon) {
+    throw new Error("Coords are not valid");
+  }
   const allVillages = await getAllVillagesFromDB();
 
   const preparedVillages = allVillages.map((village) => ({
