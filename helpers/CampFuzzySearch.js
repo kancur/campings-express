@@ -1,6 +1,7 @@
 const Fuse = require('./fuse.common.js');
 const { getAllCampData } = require('./getMergedSearchData');
 const diacritics = require('diacritics');
+const FUSE_UPDATE_INTERVAL = 1000 * 30;
 
 const options = {
   includeScore: false,
@@ -24,16 +25,20 @@ const options = {
     },
   ],
 };
-
 const fuse = new Fuse([], options);
 
+let timestamp;
 function updateFuseData() {
   getAllCampData()
     .then((data) => fuse.setCollection(data))
+    .then(() => timestamp = Date.now());
 }
 updateFuseData();
 
 module.exports = async function campFuzzySearch(query) {
+  if (Date.now() - timestamp > FUSE_UPDATE_INTERVAL) {
+    updateFuseData();
+  }
   const resultArray = await fuse.search(diacritics.remove(query));
   const sliced = resultArray.slice(0, 10);
   const cleaned = sliced.map(({ item, score }) => ({ ...item, score }));
