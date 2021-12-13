@@ -19,7 +19,13 @@ const s3 = require('../helpers/aws');
   },
 }); */
 
+const limits = {
+  files: 1, // allow only 1 file per request
+  fileSize: 10 * 1024 * 1024, // 10 MB (max file size)
+};
+
 const storage = multerS3({
+  limits: limits,
   s3: s3,
   bucket: 'campings-s3',
   contentType: multerS3.AUTO_CONTENT_TYPE,
@@ -27,7 +33,10 @@ const storage = multerS3({
     cb(null, { fieldName: file.fieldname });
   },
   key: function (req, file, cb) {
-    cb(null, `camps/featured/${req.body.slug + path.extname(file.originalname)}`);
+    cb(
+      null,
+      `camps/featured/${req.body.slug + path.extname(file.originalname)}`
+    );
   },
 });
 
@@ -141,10 +150,9 @@ exports.camping_create_post = [
       website: req.body.website,
     };
 
-        if (req.file) {
-      console.log('file path:', req.file.key)
+    if (req.file) {
       //const pathWithoutPublic = req.file.path.split('/').slice(1).join('/');
-      update["featured_image"] = req.file.key;
+      update['featured_image'] = req.file.key;
       //update["featured_image"] = req.file.path;
     }
 
