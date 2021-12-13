@@ -50,7 +50,7 @@ async function getCampData() {
     };
     if (camp.villages) {
       result.closest_village_name = camp.villages[0].name;
-      result.county_name = camp.villages[0].parents.county_name;
+      result.county_name = camp.villages[0]?.parents?.county_name;
     }
 
     return result;
