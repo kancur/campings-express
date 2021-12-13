@@ -221,3 +221,14 @@ exports.camping_slug_exists_get = async function (req, res, next) {
     next(error);
   }
 };
+
+exports.camping_delete = async function (req, res, next) {
+  const id = req.params.id;
+
+  try {
+    const response = await Camping.findByIdAndDelete(id);
+    res.json({ status: 'deleted' });
+  } catch (error) {
+    next(error);
+  }
+}
