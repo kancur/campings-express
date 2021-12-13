@@ -1,5 +1,6 @@
 const { body } = require('express-validator');
 const validationResultHandlerMiddleware = require('../middleware/validationResultHanderMiddleware');
+const closestVillagesMiddleware = require('../middleware/closestVillagesMiddleware')
 const Camping = require('../models/camping');
 const ObjectId = require('mongoose').Types.ObjectId;
 const getClosestCampings = require('../helpers/getClosestCampings');
@@ -63,13 +64,17 @@ exports.camping_detail_get = async function (req, res, next) {
 
 exports.camping_slug_get = async function (req, res, next) {
   const slug = req.params.slug;
-
+  console.log('getting camping by slug', slug)
   try {
     const response = await Camping.findOne({ slug: slug })
       .populate('closest_village', '-campings')
       .lean();
 
-    res.json({ ...response });
+    if (!response) {
+      res.status(404).json({status: 404, message: 'Camping not found'});
+    } else {
+      res.json({ ...response });
+    }
   } catch (error) {
     return next(error);
   }
@@ -111,7 +116,7 @@ exports.camping_create_post = [
     next();
   },
 
-  bodyLogger,
+  //bodyLogger,
   body('name', 'name must be longer than 3 chars (camp name)')
     .trim()
     .isLength({ min: 3 })
@@ -126,7 +131,7 @@ exports.camping_create_post = [
   //custom middleware
   validationResultHandlerMiddleware,
   // get closest village for lat long
-  //closestVillagesMiddleware,
+  closestVillagesMiddleware,
   // get close geomorphological units
   //closeGeoUnitsMiddleware,
 
@@ -148,6 +153,7 @@ exports.camping_create_post = [
       slug: req.body.slug,
       short_description: req.body.short_description,
       website: req.body.website,
+      villages: res.locals.closestVillages
     };
 
     if (req.file) {
