@@ -10,21 +10,10 @@ const path = require('path');
 const multerS3 = require('multer-s3');
 const s3 = require('../helpers/aws');
 
-/* const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/uploads/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now();
-    cb(null, req.body.slug + "-" + "featured" + path.extname(file.originalname)); //Appending extension
-  },
-}); */
-
 const limits = {
   files: 1, // allow only 1 file per request
   fileSize: 10 * 1024 * 1024, // 10 MB (max file size)
 };
-
 const storage = multerS3({
   limits: limits,
   s3: s3,
@@ -40,7 +29,6 @@ const storage = multerS3({
     );
   },
 });
-
 const upload = multer({ storage: storage });
 
 exports.camping_detail_get = async function (req, res, next) {
@@ -121,7 +109,7 @@ exports.camping_create_post = [
     .trim()
     .isLength({ min: 3 })
     .escape(),
-  body('coords', 'coords has to be object with lat and lon fields').isObject(),
+  body('coords', 'coords has to be an object with lat and lon fields').isObject(),
   body('slug', 'slug is missing')
     .trim()
     .isString()
@@ -137,16 +125,17 @@ exports.camping_create_post = [
 
   async (req, res, next) => {
     //const geoUnits = res.locals.closeGeoUnits.map((geounit) => geounit._id);
-    //console.log(res.locals.closestVillages[0]);
 
     const filter = {};
 
     if (req.body._id) {
+      // will find and update by this id
       filter['_id'] = req.body._id;
     } else {
+      // will create a new record using a new ObjectId
       filter['_id'] = ObjectId();
     }
-
+    
     const update = {
       name: req.body.name,
       coords: req.body.coords,
@@ -157,9 +146,7 @@ exports.camping_create_post = [
     };
 
     if (req.file) {
-      //const pathWithoutPublic = req.file.path.split('/').slice(1).join('/');
       update['featured_image'] = req.file.key;
-      //update["featured_image"] = req.file.path;
     }
 
     try {
