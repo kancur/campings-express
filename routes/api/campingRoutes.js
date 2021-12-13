@@ -9,6 +9,7 @@ router.get('/close/', campingController.camping_close_get);
 router.get('/slug-check', campingController.camping_slug_exists_get);
 router.get('/slug/:slug',  campingController.camping_slug_get);
 router.get('/:id',  campingController.camping_detail_get);
+router.delete('/:id',  campingController.camping_delete);
 
 module.exports = router;
 
