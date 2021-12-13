@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const villageSchema = new Schema({
+  _id: { type: Schema.Types.ObjectId, ref: "Village" }
+});
+
 const CampingSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -9,7 +13,7 @@ const CampingSchema = new Schema(
     website: { type: String, required: false },
     featured_image: { type: String, required: false },
     coords: { lat: { type: Number, required: true }, lon: { type: Number, required: true } },
-    villages: { type: Schema.Types.ObjectId, ref: "Village" },
+    villages: [{ type: Schema.Types.ObjectId, ref: "Village" }],
   },
   {
     strict: false,
