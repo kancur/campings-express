@@ -35,7 +35,6 @@ const upload = multer({ storage: storage });
 
 exports.camping_detail_get = async function (req, res, next) {
   const id = req.params.id;
-
   if (!ObjectId.isValid(id)) {
     next(new Error('Invalid id'));
     return;
@@ -43,8 +42,8 @@ exports.camping_detail_get = async function (req, res, next) {
 
   try {
     const response = await Camping.findOne({ _id: id })
-      .populate('close_villages')
-      .populate('geo_units', '-geometry -__v')
+      //.populate('closest_village')
+      //.populate('geo_units', '-geometry -__v')
       .lean();
 
     res.json({ ...response });
