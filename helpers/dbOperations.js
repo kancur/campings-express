@@ -11,12 +11,9 @@ module.exports.prepareCloseCampingsBulkOp = async function updateCloseCampings(M
   const instancesArray = await Model.find().lean();
   const bulkOperation = Model.collection.initializeUnorderedBulkOp();
   for (const instance of instancesArray) {
-    const isBetliar = instance.name.includes('Betliar');
-    if (isBetliar) console.log("-- ", instance.name);
     let closeCampings = [];
     if (instance?.coords) {
       closeCampings = await getClosestCampings(instance.coords, MIN_NR_OF_CAMPS);
-      if (isBetliar) console.log(closeCampings)
     } else {
       closeCampings = await getCloseCampingsForGeounit(instance)
     }

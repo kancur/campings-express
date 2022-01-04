@@ -114,6 +114,7 @@ exports.geounit_calculate_closest_campings = async function (req, res, next) {
       }
     });
   } catch (error) {
+    console.log(error);
     next(error);
     return;
   }
