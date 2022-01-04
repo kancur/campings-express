@@ -7,14 +7,16 @@ const MIN_NR_OF_CAMPS = 10;
 
 // Model instance must have coords property at the top level
 module.exports.prepareCloseCampingsBulkOp = async function updateCloseCampings(Model) {
+  console.log('preparing bulk op')
   const instancesArray = await Model.find().lean();
   const bulkOperation = Model.collection.initializeUnorderedBulkOp();
-
   for (const instance of instancesArray) {
-    console.log("-- ", instance.properties.name);
+    const isBetliar = instance.name.includes('Betliar');
+    if (isBetliar) console.log("-- ", instance.name);
     let closeCampings = [];
     if (instance?.coords) {
       closeCampings = await getClosestCampings(instance.coords, MIN_NR_OF_CAMPS);
+      if (isBetliar) console.log(closeCampings)
     } else {
       closeCampings = await getCloseCampingsForGeounit(instance)
     }

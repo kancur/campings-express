@@ -54,7 +54,7 @@ exports.camping_calculate_slugs = async function (req, res, next) {
 
 exports.villages_calculate_closest_campings = async function (req, res, next) {
   try {
-    const bulkOp = await updateCloseCampings(Village)
+    const bulkOp = await prepareCloseCampingsBulkOp(Village)
     bulkOp.execute(function (err, result) {
       if (err) {
         return res.json({ error: err });
@@ -63,6 +63,7 @@ exports.villages_calculate_closest_campings = async function (req, res, next) {
       }
     });
   } catch (error) {
+    console.log('error', error)
     next(error);
     return;
   }
