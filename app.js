@@ -14,7 +14,6 @@ var app = express();
 
 var mongoose = require('mongoose');
 var mongoDB = process.env.MONGODB_URI
-console.log('mongodb env variable \n\n\n XXXXX \n\n', mongoDB)
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 var db = mongoose.connection;
